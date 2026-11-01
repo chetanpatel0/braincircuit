@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About BrainCircuit</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 13px;
+    color: #1c2434;
+    margin: 0;
+    padding: 14px 16px 18px;
+    background: #ffffff;
+    line-height: 1.55;
+  }
+  .head { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .head img { width: 56px; height: 56px; border-radius: 14px; box-shadow: 0 6px 16px rgba(0,0,0,.25); }
+  h1 { font-size: 22px; margin: 0; color: #0b1226; letter-spacing: .3px; }
+  .ver { font-size: 12px; color: #5b6b86; font-weight: normal; }
+  .tag { font-size: 12.5px; color: #334155; margin: 0 0 14px; }
+  h2 {
+    font-size: 12px; text-transform: uppercase; letter-spacing: .8px;
+    color: #0284c7; margin: 16px 0 7px; padding-bottom: 4px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  ul { margin: 0; padding-left: 18px; }
+  li { margin: 3px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.4px; }
+  td { padding: 4px 6px; vertical-align: top; border-bottom: 1px solid #eef2f7; }
+  td.k { width: 42%; color: #475569; font-weight: bold; }
+  td.v { color: #1c2434; }
+  .pill {
+    display: inline-block; background: #e0f2fe; color: #075985;
+    border-radius: 20px; padding: 2px 9px; font-size: 11.5px; font-weight: bold;
+    margin: 0 4px 4px 0;
+  }
+  .install {
+    width: 100%; margin-top: 10px; padding: 10px 14px; cursor: pointer;
+    background: linear-gradient(180deg,#22d3ee,#0ea5e9); color: #04121f;
+    border: 0; border-radius: 9px; font-size: 14px; font-weight: bold; font-family: inherit;
+  }
+  .install:hover { filter: brightness(1.07); }
+  .hint { font-size: 11.5px; color: #64748b; margin-top: 6px; }
+  .dev {
+    margin-top: 20px; padding: 13px 14px; border-radius: 11px;
+    background: #0b1226; color: #dbe6ff; text-align: center;
+  }
+  .dev .lbl { font-size: 11px; text-transform: uppercase; letter-spacing: 1.2px; color: #7dd3fc; }
+  .dev .name { font-size: 17px; font-weight: bold; margin: 4px 0 2px; color: #ffffff; }
+  .dev a { color: #4ade80; font-size: 13px; text-decoration: none; font-weight: bold; }
+  .dev a:hover { text-decoration: underline; }
+  .dev .meta { font-size: 11px; color: #8fa6cf; margin-top: 7px; }
+</style>
+</head>
+<body>
+
+  <div class="head">
+    <img src="braincircuit_logo.png" alt="BrainCircuit logo">
+    <div>
+      <h1>BrainCircuit</h1>
+      <div class="ver">Version <span class="ver-txt">...</span></div>
+    </div>
+  </div>
+
+  <p class="tag">
+    An installable, offline&nbsp;capable electronic circuit simulator that runs entirely
+    in your browser - on phone, tablet and desktop.
+  </p>
+
+  <span class="pill">Circuit simulation</span>
+  <span class="pill">Works offline</span>
+  <span class="pill">Installable PWA</span>
+  <span class="pill">Cross platform</span>
+
+  <h2>What it does</h2>
+  <ul>
+    <li>Draw circuits with resistors, capacitors, inductors, diodes, transistors, op&nbsp;amps, logic gates, motors, antennas and 100+ more elements</li>
+    <li>Real time transient (time domain) simulation with live oscilloscope graphs</li>
+    <li>DC operating point, AC analysis, frequency response / FFT and signal power charts</li>
+    <li>Custom subcircuits, custom functions, custom logic and SPICE style device models</li>
+    <li>Open, save, import and export circuits as file, text or shareable link</li>
+    <li>Export schematics as PNG / SVG images, print, undo / redo and full keyboard shortcuts</li>
+  </ul>
+
+  <h2>Technologies used</h2>
+  <table>
+    <tr><td class="k">Application type</td><td class="v">Progressive Web App (PWA) - installable, offline capable, works on any device</td></tr>
+    <tr><td class="k">Language</td><td class="v">Java 8 (business logic and UI), JavaScript, HTML5, CSS3</td></tr>
+    <tr><td class="k">Compiler / framework</td><td class="v">Google Web Toolkit (GWT) 2.8.2 - compiles Java to optimized JavaScript</td></tr>
+    <tr><td class="k">Build tooling</td><td class="v">Gradle 8.7, Java HotSpot JDK 8</td></tr>
+    <tr><td class="k">Rendering</td><td class="v">HTML5 Canvas 2D drawing engine, Fontello icon webfont, canvas2svg for SVG export</td></tr>
+    <tr><td class="k">Simulation engine</td><td class="v">Custom circuit solver - Modified Nodal Analysis (MNA) with sparse LU matrix decomposition, trapezoidal / backward Euler integration, adaptive time step, DC, AC, transient and FFT analysis</td></tr>
+    <tr><td class="k">Device models</td><td class="v">SPICE style diodes and LEDs, bipolar transistors, JFET / MOSFET / SCRs, op amps, digital logic families, relays, custom subcircuits</td></tr>
+    <tr><td class="k">Data &amp; storage</td><td class="v">Web Storage (localStorage / sessionStorage), LZ-String compression for shareable circuit URLs, XML circuit format</td></tr>
+    <tr><td class="k">Networking</td><td class="v">HTTP requests, optional WebSocket link, optional audio input / output, optional Dropbox import</td></tr>
+    <tr><td class="k">Microcontroller sim</td><td class="v">AVR8js - 8 bit AVR emulation in JavaScript</td></tr>
+    <tr><td class="k">Install / offline</td><td class="v">Web App Manifest + Service Worker caching (pre-caches the whole app so it opens with no internet)</td></tr>
+    <tr><td class="k">Languages</td><td class="v">Interface translated into 15 languages (GWT i18n)</td></tr>
+    <tr><td class="k">Desktop packaging</td><td class="v">Electron wrapper available for Windows / macOS / Linux</td></tr>
+  </table>
+
+  <h2>Install on this device</h2>
+  <button class="install" type="button" id="bcInstallBtn">Install BrainCircuit as an app</button>
+  <div class="hint">
+    Works on Android, iPhone, iPad, Windows, macOS and Linux. After the first load the
+    simulator keeps working without an internet connection.
+  </div>
+
+  <div class="dev">
+    <div class="lbl">Developed by</div>
+    <div class="name">Chetan Patel</div>
+    <a href="https://github.com/chetanpatel0" target="_blank" rel="noopener">github.com/chetanpatel0</a>
+    <div class="meta">BrainCircuit &copy; Chetan Patel</div>
+  </div>
+
+<script>
+  // version written by the app into sessionStorage
+  (function () {
+    var v = '1.0.0';
+    try { v = sessionStorage.getItem('versionString') || v; } catch (e) {}
+    var el = document.querySelector('.ver-txt');
+    if (el) el.textContent = v;
+  })();
+
+  // install button (same origin iframe -> talk to the parent shell)
+  document.getElementById('bcInstallBtn').addEventListener('click', function () {
+    try {
+      if (window.parent && window.parent !== window && typeof window.parent.bcInstallApp === 'function') {
+        window.parent.bcInstallApp();
+        return;
+      }
+    } catch (e) {}
+    this.textContent = 'Use your browser menu: Install app / Add to Home screen';
+  });
+</script>
+</body>
+</html>

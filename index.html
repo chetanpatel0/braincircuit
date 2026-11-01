@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0b1226">
+    <meta name="description" content="BrainCircuit - an installable, offline capable electronic circuit simulator web app.">
+    <meta name="application-name" content="BrainCircuit">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="BrainCircuit">
+    <meta name="msapplication-TileColor" content="#0b1226">
+    <meta name="msapplication-TileImage" content="icon192.png">
+
+    <!-- Properties can be specified to influence deferred binding -->
+    <meta name='gwt:property' content='locale=en_UK'>
+
+    <title>BrainCircuit</title>
+
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+
+<style>
+.disabled {
+	color: lightgray
+}
+.topSpace {
+	margin-top: 12px;
+}
+.cursorPointer {
+   cursor: default;
+}
+.cursorCross {
+   cursor: crosshair;
+}
+
+.cursorSplitter {
+   cursor: row-resize;
+}
+
+.gwt-MenuItem-disabled {
+	color: lightgray;
+}
+.offScreen {
+	position: absolute;
+	right: 101%;
+	overflow: hidden;
+}
+.gwt-Frame{
+	scrolling="no";
+	border: 0px !important;
+}
+
+.gwt-MenuItem {
+	font-size: 12px !important;
+}
+
+.gwt-MenuBar.gwt-MenuBar-horizontal {
+	font-size: 12px !important;
+	}
+
+/* Vertically center the menu row inside the 30px-tall bar (desktop / tablet).
+   Items keep their default left-to-right positions - no horizontal centering.
+   Scoped to >=601px so the mobile hamburger dropdown (max-width:600px in
+   style.css) keeps its original block layout. */
+@media only screen and (min-width: 601px) {
+	.gwt-MenuBar.gwt-MenuBar-horizontal {
+		display: flex;
+		align-items: center;
+		}
+	.gwt-MenuBar.gwt-MenuBar-horizontal > table {
+		margin: 0;
+		}
+	}
+	
+.gwt-Label-selected {
+	font-size: 1.3em;
+	font-weight: 700;
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
+}
+.gwt-Label-1off {
+	color: DarkGray;
+}
+
+.gwt-Label-2off {
+	font-size:0.8em;
+	color: LightGray;
+}
+
+.gwt-Label-current {
+}
+
+.gwt-Button.chbut {
+	padding:3px;
+	margin: 3px;
+}
+
+.gwt-Button.chbut.chsel {
+	font-weight: bold;
+}
+
+.gwt-Button.chbut-black {
+	background: black;
+	color: white;
+}
+
+.gwt-Button.chbut-white {
+	background: white;
+	color: black;
+}
+
+.gwt-TextBox.scalebox {
+	width: 100px;
+}
+
+.gwt-Button.expand-but {
+	line-height: 0;
+	font-size: 13px;
+	margin-right: 5px;
+	border-radius:0px;
+	display: inline-block;
+	text-align: center;
+	width: 15px;
+	height: 15px;
+	padding-left: 0;
+	padding-right: 0;
+	padding-bottom:1px;
+	padding-top:0;
+	margin-bottom:1px;
+	background:gray;
+	color:white;
+}
+
+
+.topButton-red {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left:5px;
+    padding: 5px 7px;
+    text-decoration: none;
+    color: #ffffff;
+    cursor: pointer;
+    cursor: hand;
+    font-size: small;
+    background-color: #ff0000; 
+    border: 1px solid #bbb;
+    border-bottom: 1px solid #a0a0a0;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+}
+
+.topButton {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left:5px;
+    padding: 5px 7px;
+    text-decoration: none;
+    cursor: pointer;
+    cursor: hand;
+    font-size: small;
+    background-color: #e7e7e7; 
+    border: 1px solid #bbb;
+    border-bottom: 1px solid #a0a0a0;
+    border-radius: 3px;
+    -moz-border-radius: 3px;
+}
+
+.radioPanel label {
+	margin-right: 15px;
+}
+
+/* ================= BrainCircuit brand ================= */
+.bc-brand {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	font-weight: 700;
+	font-size: 13px;
+	white-space: nowrap;
+	padding: 2px 4px 2px 2px;
+}
+.bc-brand img {
+	width: 19px;
+	height: 19px;
+	display: block;
+	border-radius: 5px;
+	box-shadow: 0 1px 3px rgba(0,0,0,.35);
+}
+.bc-brand .bc-brand-sub {
+	color: #64748b;
+	font-weight: 600;
+}
+.bc-brand-item, .bc-brand-item.gwt-MenuItem-selected, .bc-brand-item:hover {
+	background: transparent !important;
+	text-decoration: none !important;
+	cursor: default !important;
+	}
+@media only screen and (max-width: 700px) {
+	.bc-brand .bc-brand-name { display: none; }
+}
+
+/* ================= overlays shared ================= */
+.bc-overlay {
+	position: fixed;
+	left: 0; top: 0; right: 0; bottom: 0;
+	z-index: 2147483000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 18px;
+	font-family: Arial, Helvetica, sans-serif;
+}
+.bc-hidden { display: none !important; }
+
+/* ================= install prompt ================= */
+#bcInstallModal {
+	background: rgba(4, 10, 24, .78);
+	backdrop-filter: blur(3px);
+}
+.bc-card {
+	background: #0d1730;
+	color: #e8eefc;
+	border: 1px solid #24406e;
+	border-radius: 16px;
+	max-width: 400px;
+	width: 100%;
+	padding: 22px 22px 18px;
+	box-shadow: 0 24px 60px rgba(0,0,0,.55);
+	text-align: center;
+	position: relative;
+	animation: bcPop .22s ease-out;
+}
+@keyframes bcPop {
+	from { transform: translateY(14px) scale(.97); opacity: 0; }
+	to { transform: none; opacity: 1; }
+}
+.bc-card img.bc-card-logo {
+	width: 74px; height: 74px; border-radius: 18px; display: block; margin: 0 auto 12px;
+	box-shadow: 0 10px 26px rgba(0,0,0,.45);
+}
+.bc-card h2 {
+	margin: 0 0 6px; font-size: 20px; letter-spacing: .3px;
+}
+.bc-card p {
+	margin: 0 0 14px; font-size: 13.5px; line-height: 1.5; color: #b9c8e6;
+}
+.bc-card ul {
+	text-align: left; margin: 0 0 16px; padding: 0; list-style: none; font-size: 13px; color: #cfdbf5;
+}
+.bc-card ul li { padding: 4px 0 4px 24px; position: relative; }
+.bc-card ul li:before {
+	content: ""; position: absolute; left: 4px; top: 8px; width: 10px; height: 10px;
+	border-radius: 3px; background: #22d3ee; box-shadow: 0 0 8px #22d3ee88;
+}
+.bc-actions { display: flex; gap: 10px; justify-content: center; }
+.bc-btn {
+	appearance: none; border: 0; border-radius: 10px; cursor: pointer;
+	font-size: 14.5px; font-weight: 700; padding: 11px 20px; min-width: 110px;
+	font-family: inherit;
+}
+.bc-btn-primary {
+	background: linear-gradient(180deg, #22d3ee, #0ea5e9);
+	color: #04121f;
+	box-shadow: 0 8px 18px rgba(14,165,233,.35);
+}
+.bc-btn-primary:hover { filter: brightness(1.08); }
+.bc-btn-ghost {
+	background: transparent; color: #9db2d8; border: 1px solid #2d4877;
+}
+.bc-btn-ghost:hover { color: #e8eefc; border-color: #46679e; }
+
+/* ================= install chip ================= */
+#bcInstallChip {
+	position: fixed;
+	left: 14px;
+	bottom: 14px;
+	z-index: 2147482000;
+	display: flex;
+	align-items: center;
+	gap: 2px;
+	background: #0d1730;
+	color: #e8eefc;
+	border: 1px solid #24406e;
+	border-radius: 999px;
+	padding: 5px 6px 5px 8px;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+	font-weight: 700;
+	box-shadow: 0 10px 26px rgba(0,0,0,.4);
+}
+#bcInstallChipMain {
+	display: flex;
+	align-items: center;
+	gap: 9px;
+	cursor: pointer;
+	padding: 2px 6px 2px 0;
+	border-radius: 999px;
+}
+#bcInstallChipMain img { width: 22px; height: 22px; border-radius: 6px; display: block; }
+#bcInstallChip:hover { border-color: #22d3ee; }
+#bcInstallChipClose {
+	appearance: none;
+	border: 0;
+	background: transparent;
+	color: #7f92b5;
+	font-size: 18px;
+	line-height: 1;
+	width: 26px;
+	height: 26px;
+	border-radius: 50%;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex: 0 0 auto;
+	transition: background .15s ease, color .15s ease;
+}
+#bcInstallChipClose:hover { background: rgba(226, 72, 86, .18); color: #ff6b7a; }
+body.bc-modal-open #bcInstallChip { display: none; }
+@media only screen and (max-width: 600px) {
+	#bcInstallChip { left: 10px; bottom: 10px; font-size: 12px; padding: 4px 5px 4px 7px; }
+	#bcInstallChipMain img { width: 20px; height: 20px; }
+	#bcInstallChipClose { width: 24px; height: 24px; font-size: 17px; }
+}
+
+/* ================= offline screen ================= */
+#bcOffline {
+	background: #070d1d;
+	color: #e8eefc;
+	text-align: center;
+	flex-direction: column;
+}
+#bcOffline .bc-offline-box { max-width: 420px; }
+#bcOffline img { width: 96px; height: 96px; border-radius: 24px; margin-bottom: 18px;
+	box-shadow: 0 16px 40px rgba(0,0,0,.55); }
+#bcOffline h1 { margin: 0 0 10px; font-size: 24px; font-family: Arial, Helvetica, sans-serif; }
+#bcOffline p { margin: 0 0 8px; font-size: 14.5px; line-height: 1.6; color: #b9c8e6;
+	font-family: Arial, Helvetica, sans-serif; }
+#bcOffline .bc-note { font-size: 12.5px; color: #7f92b5; }
+#bcOffline .bc-actions { margin-top: 20px; }
+
+/* ================= toast ================= */
+#bcToast {
+	position: fixed;
+	left: 50%;
+	bottom: 26px;
+	transform: translateX(-50%);
+	z-index: 2147483100;
+	background: #0d1730;
+	border: 1px solid #24406e;
+	color: #e8eefc;
+	border-radius: 12px;
+	padding: 12px 16px;
+	max-width: 460px;
+	width: calc(100% - 40px);
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13.5px;
+	line-height: 1.55;
+	box-shadow: 0 16px 40px rgba(0,0,0,.5);
+}
+#bcToast strong { color: #22d3ee; }
+</style>
+
+<link rel="stylesheet" href="font/fontello.css">
+</head>
+  <body>
+
+    <script language="javascript" src="lz-string.min.js"></script>
+
+    <script>
+    // ---- BrainCircuit app shell state (defined before the GWT module runs) ----
+    window.BC = {
+      ready: false,
+      prompt: null,
+      dismissed: localStorage.getItem('bc_install_dismissed') === '1',
+      installed: localStorage.getItem('bc_app_installed') === '1',
+      standalone: (window.matchMedia ? window.matchMedia('(display-mode: standalone)').matches : false) ||
+                  window.navigator.standalone === true,
+      retryTimer: null
+    };
+
+    // Called by the simulator as soon as the module has initialised.
+    window.oncircuitjsloaded = function () {
+      try {
+        window.BC.ready = true;
+        if (window.BC.retryTimer) { clearTimeout(window.BC.retryTimer); window.BC.retryTimer = null; }
+        var off = document.getElementById('bcOffline');
+        if (off) off.classList.add('bc-hidden');
+        injectBrand();
+      } catch (e) { /* never break the simulator */ }
+    };
+
+    // Fallback branding: normally the app itself adds the logo + name to the main
+    // menu bar; this only runs if that is missing.
+    function injectBrand() {
+      if (document.querySelector('.bc-brand')) return true;
+      var mb = document.querySelector('.gwt-MenuBar-horizontal');
+      if (!mb) return false;
+      var host = document.createElement('span');
+      host.className = 'bc-brand bc-brand-fallback';
+      host.innerHTML = '<img src="braincircuit_logo.png" alt="">' +
+                       '<span class="bc-brand-name">BrainCircuit</span>';
+      host.title = 'BrainCircuit';
+      var tbl = mb.querySelector('table');
+      if (tbl && tbl.rows && tbl.rows.length && tbl.rows[0]) {
+        var td = document.createElement('td');
+        td.className = 'bc-brand-item';
+        td.appendChild(host);
+        tbl.rows[0].insertBefore(td, tbl.rows[0].firstChild);
+        return true;
+      }
+      if (mb.firstChild) mb.insertBefore(host, mb.firstChild); else mb.appendChild(host);
+      return true;
+    }
+    </script>
+
+    <!-- This script tag is what actually loads the GWT module. -->
+    <script language="javascript" src="circuitjs1/circuitjs1.nocache.js"></script>
+
+    <!-- Include a history iframe to enable full GWT history support -->
+    <iframe src="javascript:''" id="__gwt_historyFrame" style="width:0;height:0;border:0"></iframe>
+
+    <!-- ============ install as web app prompt ============ -->
+    <div id="bcInstallModal" class="bc-overlay bc-hidden" role="dialog" aria-modal="true" aria-labelledby="bcInstallTitle">
+      <div class="bc-card">
+        <img class="bc-card-logo" src="braincircuit_logo.png" alt="BrainCircuit logo">
+        <h2 id="bcInstallTitle">Install BrainCircuit</h2>
+        <p>Add BrainCircuit to this device and use it like a native app.</p>
+        <ul>
+          <li>Opens in its own window, no browser bar</li>
+          <li>Launches from your home screen / start menu</li>
+          <li>Works fully offline once installed</li>
+          <li>Phone, tablet, desktop - Android, iOS, Windows, macOS, Linux</li>
+        </ul>
+        <div class="bc-actions">
+          <button type="button" class="bc-btn bc-btn-primary" id="bcInstallYes">Install</button>
+          <button type="button" class="bc-btn bc-btn-ghost" id="bcInstallNo">No</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ floating install button ============ -->
+    <div id="bcInstallChip" class="bc-hidden" title="Install BrainCircuit on this device">
+      <span id="bcInstallChipMain" role="button" tabindex="0">
+        <img src="braincircuit_logo.png" alt=""><span>Install</span>
+      </span>
+      <button type="button" id="bcInstallChipClose" class="bc-chip-x" title="Dismiss" aria-label="Dismiss install button">&times;</button>
+    </div>
+
+    <!-- ============ offline screen (only before the app has loaded) ============ -->
+    <div id="bcOffline" class="bc-overlay bc-hidden" role="alert">
+      <div class="bc-offline-box">
+        <img src="braincircuit_logo.png" alt="BrainCircuit logo">
+        <h1>You are offline</h1>
+        <p>BrainCircuit could not be loaded because this device is not connected to the internet.</p>
+        <p class="bc-note">Reconnect and press Try again. After BrainCircuit has loaded once,
+           it keeps working with no internet connection.</p>
+        <div class="bc-actions">
+          <button type="button" class="bc-btn bc-btn-primary" id="bcRetry">Try again</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ toast ============ -->
+    <div id="bcToast" class="bc-hidden"></div>
+
+    <noscript>
+      <div style="font-family:Arial,sans-serif;padding:24px">
+        <h1>BrainCircuit</h1>
+        <p>BrainCircuit needs JavaScript to run the circuit simulator. Please enable JavaScript and reload.</p>
+      </div>
+    </noscript>
+
+    <script>
+    (function () {
+      'use strict';
+
+      var BC = window.BC;
+      var el = function (id) { return document.getElementById(id); };
+      var modal = el('bcInstallModal');
+      var chip = el('bcInstallChip');
+      var offline = el('bcOffline');
+      var toast = el('bcToast');
+      var toastTimer = null;
+
+      /* ---------------------------------------------------------------
+         service worker registration (offline support + installability)
+      ---------------------------------------------------------------- */
+      if ('serviceWorker' in navigator) {
+        var hadController = !!navigator.serviceWorker.controller;
+        navigator.serviceWorker.addEventListener('controllerchange', function () {
+          // Reload only when an updated worker takes over an already controlled page.
+          if (!hadController) { hadController = true; return; }
+          if (BC.reloading) return;
+          BC.reloading = true;
+          window.location.reload();
+        });
+        window.addEventListener('load', function () {
+          navigator.serviceWorker.register('service-worker.js').then(function (reg) {
+            // look for updates in the background
+            if (reg.update) { try { reg.update(); } catch (e) {} }
+          }).catch(function (err) {
+            if (window.console) console.warn('Service worker registration failed:', err);
+          });
+
+          // Make sure the simulator engine that this browser actually loaded
+          // (the strong-named GWT permutation) ends up in the offline cache.
+          navigator.serviceWorker.ready.then(function () {
+              try {
+                var res = performance.getEntriesByType('resource') || [];
+                for (var i = 0; i < res.length; i++) {
+                  if (/\.cache\.js(\?|$)/.test(res[i].name)) {
+                    fetch(res[i].name).catch(function () {});
+                  }
+                }
+              } catch (e) {}
+            });
+        });
+      }
+
+      /* ---------------------------------------------------------------
+         offline screen
+         shown ONLY while the simulator has not finished loading yet;
+         once the app is up it never warns again if the internet drops.
+      ---------------------------------------------------------------- */
+      function showOffline() {
+        if (BC.ready || !offline) return;
+        offline.classList.remove('bc-hidden');
+      }
+      function hideOffline() {
+        if (offline) offline.classList.add('bc-hidden');
+      }
+
+      window.addEventListener('offline', function () {
+        // If the app is already running there is nothing to warn about.
+        if (!BC.ready) showOffline();
+      });
+      window.addEventListener('online', function () {
+        if (!BC.ready) hideOffline();
+      });
+      // Detect a first load that fails while there is no connection.
+      BC.retryTimer = setTimeout(function () {
+        if (!BC.ready && navigator.onLine === false) showOffline();
+      }, 8000);
+      window.addEventListener('error', function (ev) {
+        var t = ev && ev.target;
+        if (t && (t.tagName === 'SCRIPT' || t.tagName === 'LINK') && navigator.onLine === false) {
+          showOffline();
+        }
+      }, true);
+
+      var retryBtn = el('bcRetry');
+      if (retryBtn) retryBtn.addEventListener('click', function () { window.location.reload(); });
+
+      /* ---------------------------------------------------------------
+         install as web app
+      ---------------------------------------------------------------- */
+      function isStandalone() { return BC.standalone === true; }
+
+      function showToast(html, ms) {
+        if (!toast) return;
+        toast.innerHTML = html;
+        toast.classList.remove('bc-hidden');
+        if (toastTimer) clearTimeout(toastTimer);
+        toastTimer = setTimeout(function () { toast.classList.add('bc-hidden'); }, ms || 7000);
+      }
+
+      function openModal() {
+        if (!modal || isStandalone()) return;
+        modal.classList.remove('bc-hidden');
+        document.body.classList.add('bc-modal-open');
+        var y = el('bcInstallYes'); if (y) y.focus();
+      }
+      function closeModal() {
+        if (modal) modal.classList.add('bc-hidden');
+        document.body.classList.remove('bc-modal-open');
+        refreshChip();
+      }
+      function refreshChip() {
+        if (!chip) return;
+        var show = !isStandalone() && !BC.dismissed && !BC.installed && modal &&
+                   modal.classList.contains('bc-hidden');
+        chip.classList.toggle('bc-hidden', !show);
+      }
+
+      function manualInstructions() {
+        showToast(
+          '<strong>Install BrainCircuit manually</strong><br>' +
+          'Android / Chrome: menu (&#8942;) &rarr; <em>Install app</em> or <em>Add to Home screen</em>.<br>' +
+          'iPhone / iPad Safari: <em>Share</em> &rarr; <em>Add to Home Screen</em>.<br>' +
+          'Desktop Chrome / Edge / Opera: install icon at the right of the address bar.', 11000);
+      }
+
+      function doInstall() {
+        var p = BC.prompt;
+        if (p) {
+          BC.prompt = null;
+          p.prompt();
+          p.userChoice.then(function (choice) {
+            if (choice && choice.outcome === 'accepted') {
+              BC.installed = true;
+              try { localStorage.setItem('bc_app_installed', '1'); } catch (e) {}
+            }
+            closeModal();
+          }).catch(function () { closeModal(); });
+        } else {
+          closeModal();
+          manualInstructions();
+        }
+      }
+
+      window.addEventListener('beforeinstallprompt', function (e) {
+        e.preventDefault();
+        BC.prompt = e;
+        if (!BC.dismissed && !BC.installed && !isStandalone()) openModal();
+        refreshChip();
+      });
+
+      window.addEventListener('appinstalled', function () {
+        BC.installed = true;
+        BC.dismissed = false;
+        try {
+          localStorage.setItem('bc_app_installed', '1');
+          localStorage.removeItem('bc_install_dismissed');
+        } catch (e) {}
+        closeModal();
+        showToast('<strong>BrainCircuit installed.</strong> You can now launch it from your home screen.', 5000);
+      });
+
+      var yes = el('bcInstallYes');
+      if (yes) yes.addEventListener('click', doInstall);
+
+      var no = el('bcInstallNo');
+      if (no) no.addEventListener('click', function () {
+        BC.dismissed = true;
+        try { localStorage.setItem('bc_install_dismissed', '1'); } catch (e) {}
+        closeModal();   // never ask again automatically
+      });
+
+      if (modal) modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeModal();   // click outside = keep the decision, no nagging
+      });
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && modal && !modal.classList.contains('bc-hidden')) closeModal();
+      });
+
+      if (chip) {
+        var chipMain = el('bcInstallChipMain');
+        var chipOpen = function () {
+          if (BC.prompt) { doInstall(); } else { openModal(); manualInstructions(); }
+        };
+        if (chipMain) {
+          chipMain.addEventListener('click', chipOpen);
+          chipMain.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); chipOpen(); }
+          });
+        }
+        // Close (X): dismiss permanently. Never shown again on this device.
+        var chipClose = el('bcInstallChipClose');
+        if (chipClose) chipClose.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          BC.dismissed = true;
+          try { localStorage.setItem('bc_install_dismissed', '1'); } catch (err) {}
+          if (chip) chip.classList.add('bc-hidden');
+        });
+      }
+
+      // The About dialog can ask the parent page to install (same origin iframe).
+      window.bcInstallApp = function () {
+        if (isStandalone()) {
+          showToast('<strong>BrainCircuit is already installed.</strong>', 4000);
+          return;
+        }
+        if (BC.prompt) { doInstall(); } else { openModal(); manualInstructions(); }
+      };
+
+      if (isStandalone() || BC.installed) {
+        if (modal) modal.classList.add('bc-hidden');
+      }
+      refreshChip();
+
+      // Inject the logo + name once the menu bar exists (and keep trying for a while).
+      var tries = 0;
+      var brandTimer = setInterval(function () {
+        if (injectBrand() || ++tries > 40) clearInterval(brandTimer);
+      }, 400);
+      window.addEventListener('load', function () { injectBrand(); refreshChip(); });
+    })();
+    </script>
+  </body>
+ </html>
